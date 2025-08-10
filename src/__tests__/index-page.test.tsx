@@ -22,7 +22,7 @@ describe("Index Page", () => {
     it("renders README content", async () => {
       const result = await getStaticProps({ params: { name: [] } });
       const { props } = result as {
-        props: { content: string | null; hasGraph: boolean };
+        props: { content: string | null };
       };
 
       render(<DocumentPage content={props.content} />);
