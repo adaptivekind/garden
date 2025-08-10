@@ -19,7 +19,7 @@ export default function DocumentPage({ content }: DocumentPageProps) {
     return (
       <article>
         <h1>Not Found</h1>
-        <p>The requested markdown file could not be found.</p>
+        <p>Sorry, nothing to see here.</p>
       </article>
     );
   }

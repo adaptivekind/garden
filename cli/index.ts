@@ -14,6 +14,10 @@ process.on("SIGINT", () => {
   console.log("Closing garden");
 });
 
+process.on("SIGTERM", () => {
+  console.log("Garden CLI - SIGTERM received");
+});
+
 const program = new Command();
 
 program
@@ -52,12 +56,14 @@ program
       cwd: appDir,
       stdio: "inherit",
       env: { ...process.env },
+    }).on("error", (error) => {
+      console.error("Failed to start Next.js server:", error);
+      process.exit(1);
     });
 
     process.on("SIGINT", () => {
       console.log("Stopping next process");
       nextProcess.kill("SIGINT");
-      process.exit(1);
     });
 
     // Generate graph after Next.js process has spawned (if requested)
@@ -87,15 +93,6 @@ program
         console.error("Failed to generate graph:", error);
       }
     }
-
-    process.on("SIGTERM", () => {
-      console.log("Garden CLI - SIGTERM received");
-    });
-
-    nextProcess.on("error", (error) => {
-      console.error("Failed to start Next.js server:", error);
-      process.exit(1);
-    });
   });
 
 program.parse();
