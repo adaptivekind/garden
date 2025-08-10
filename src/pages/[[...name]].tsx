@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import ReactMarkdown from "react-markdown";
 import { processWikiLinks } from "../lib/markdown";
 import { createSiteGarden } from "../lib/garden";
-
 interface DocumentPageProps {
   content: string | null;
 }

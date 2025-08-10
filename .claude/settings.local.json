@@ -9,17 +9,16 @@
       "Bash(npm test)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(chmod:*)",
       "Bash(npm run typecheck:*)",
       "Bash(npm run lint)",
-      "Bash(mv:*)",
-      "Bash(rm:*)",
       "Bash(npm install:*)",
       "Bash(npm run eslint:*)",
       "Bash(npm test:*)",
       "Bash(npm run test:*)",
       "Bash(npx playwright:*)",
-      "mcp__markdown-reader__read_markdown_file"
+      "mcp__markdown-reader__read_markdown_file",
+      "Bash(cp:*)",
+      "Bash(cat:*)"
     ],
     "deny": []
   }
