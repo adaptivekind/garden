@@ -7,6 +7,7 @@
     "garden": "dist/index.js"
   },
   "scripts": {
+    "clean:watchman": "watchman watch-del '/Users/ian/projects/my/garden'",
     "dev": "npm run copy:graph && MARKDOWN_DIR=./test/test-gardens/garden1 next dev --turbopack",
     "eslint": "eslint src/pages --ext .ts",
     "eslint:fix": "eslint --fix src/pages --ext .ts",
