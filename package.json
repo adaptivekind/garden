@@ -1,0 +1,80 @@
+{
+  "name": "@adaptivekind/garden",
+  "version": "0.0.1",
+  "description": "A Next.js application to view markdown files in any directory",
+  "main": "dist/index.js",
+  "bin": {
+    "garden": "dist/index.js"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "eslint": "eslint src/pages --ext .ts",
+    "eslint:fix": "eslint --fix src/pages --ext .ts",
+    "build": "npm run build:site && npm run build:cli",
+    "build:site": "MARKDOWN_DIR=./test/test-gardens/garden1 next build",
+    "build:cli": "tsc cli/index.ts --outDir dist --target es2020 --module commonjs --moduleResolution node --esModuleInterop --allowSyntheticDefaultImports --resolveJsonModule --declaration false",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "npm run prettier:fix && npm run eslint:fix",
+    "prettier": "npx prettier --check .",
+    "prettier:fix": "npx prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:garden": "MARKDOWN_DIR=./test/test-gardens/garden1 npm run dev",
+    "test:cucumber": "cucumber-js e2e/features --require-module ts-node/register --require e2e/steps/**/*.ts",
+    "test:e2e": "start-server-and-test start 3000 test:cucumber",
+    "test:e2e:headed": "HEADED=true start-server-and-test start 3000 test:cucumber",
+    "upgrade": "npx npm-check-updates -u && npm install",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@adaptivekind/markdown-graph": "^0.0.15",
+    "commander": "^14.0.0",
+    "glob": "^11.0.3",
+    "gray-matter": "^4.0.3",
+    "next": "^15.4.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-markdown": "^10.1.0"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^7.3.2",
+    "@cucumber/playwright": "^3.1.0",
+    "@eslint/eslintrc": "^3.3.1",
+    "@playwright/test": "^1.54.2",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.2.1",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "eslint": "^9.33.0",
+    "eslint-config-next": "^15.4.6",
+    "husky": "^9.1.7",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
+    "lint-staged": "^16.1.5",
+    "prettier": "^3.6.2",
+    "start-server-and-test": "^2.0.13",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "keywords": [
+    "markdown",
+    "viewer",
+    "nextjs",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  }
+}

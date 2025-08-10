@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+
+# Check for untracked files
+untracked_files=$(git ls-files --others --exclude-standard)
+if [ -n "$untracked_files" ]; then
+  echo "❌ Error: You have untracked files:"
+  echo "$untracked_files" | sed 's/^/  /'
+  echo ""
+  echo "Please add files to git or .gitignore before committing:"
+  echo "  git add <file>"
+  echo "  echo '<file>' >> .gitignore"
+  exit 1
+fi
+
+# Run lint-staged
+npx lint-staged
+
+# Run tests
+npm run test
+
+# Run type checking
+npm run typecheck
+
