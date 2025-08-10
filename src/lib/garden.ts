@@ -1,11 +1,11 @@
-import { createGarden } from '@adaptivekind/markdown-graph'
-import { getBaseDir } from './config'
+import { createGarden } from "@adaptivekind/markdown-graph";
+import { getBaseDir } from "./config";
 
 export const createSiteGarden = async () => {
   return createGarden({
-    type: 'file',
+    type: "file",
     path: getBaseDir(),
     noSections: true,
     justNodeNames: true,
-  })
-}
+  });
+};

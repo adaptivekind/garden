@@ -1,9 +1,9 @@
 ---
-title: 'Kitchen Sink - All Markdown Examples'
-author: 'Test Author'
-date: '2024-01-01'
-tags: ['test', 'documentation', 'markdown', 'examples', 'kitchen-sink']
-description: 'A comprehensive example of all markdown features and formatting'
+title: "Kitchen Sink - All Markdown Examples"
+author: "Test Author"
+date: "2024-01-01"
+tags: ["test", "documentation", "markdown", "examples", "kitchen-sink"]
+description: "A comprehensive example of all markdown features and formatting"
 ---
 
 # Kitchen Sink - All Markdown Examples
@@ -68,13 +68,13 @@ We've already seen h1, h2, and h3. Here are more:
 
 ```javascript
 function hello(name) {
-  console.log(`Hello from ${name}!`)
-  return `Greetings, ${name}!`
+  console.log(`Hello from ${name}!`);
+  return `Greetings, ${name}!`;
 }
 
 // Example usage
-const message = hello('Kitchen Sink')
-console.log(message)
+const message = hello("Kitchen Sink");
+console.log(message);
 ```
 
 ### Python

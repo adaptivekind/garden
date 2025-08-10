@@ -1,1 +1,1 @@
-export const getBaseDir = () => process.env.MARKDOWN_DIR || process.cwd()
+export const getBaseDir = () => process.env.MARKDOWN_DIR || process.cwd();

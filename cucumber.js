@@ -1,11 +1,11 @@
 module.exports = {
   default: {
-    requireModule: ['ts-node/register'],
-    require: ['e2e/steps/**/*.ts'],
-    format: ['progress', 'html:e2e/reports/cucumber-report.html'],
+    requireModule: ["ts-node/register"],
+    require: ["e2e/steps/**/*.ts"],
+    format: ["progress", "html:e2e/reports/cucumber-report.html"],
     formatOptions: {
-      snippetInterface: 'async-await'
+      snippetInterface: "async-await",
     },
     publishQuiet: true,
-  }
-}
+  },
+};
