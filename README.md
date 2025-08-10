@@ -75,3 +75,14 @@ npm run lint:fix           # Fix linting and formatting issues
 npm link                   # Link for local testing
 garden                     # Run CLI locally
 ```
+
+## Local testing
+
+Build and link
+
+```sh
+npm run build:cli
+npm link
+```
+
+Then change to a directory of markdown and run `garden`

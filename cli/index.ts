@@ -4,6 +4,7 @@ import { Command } from 'commander'
 import { spawn } from 'child_process'
 import * as path from 'path'
 import * as fs from 'fs'
+import { createGarden, Garden } from '@adaptivekind/markdown-graph'
 
 const program = new Command()
 
@@ -17,7 +18,8 @@ program
     'directory to scan for markdown files',
     process.cwd()
   )
-  .action(options => {
+  .option('-g, --generate-graph', 'generate markdown graph on startup')
+  .action(async options => {
     const targetDir = path.resolve(options.dir)
     const port = options.port
 
@@ -43,15 +45,29 @@ program
       env: { ...process.env },
     })
 
-    // Handle process termination
+    // Generate graph after Next.js process has spawned (if requested)
+    if (options.generateGraph) {
+      try {
+        console.log('Generating markdown graph...')
+        const garden: Garden = await createGarden({
+          type: 'file',
+          path: targetDir,
+        })
+        console.log(
+          `Graph generated with ${Object.keys(garden.graph.nodes).length} nodes and ${garden.graph.links.length} links`
+        )
+      } catch (error) {
+        console.error('Failed to generate graph:', error)
+      }
+    }
+
     process.on('SIGINT', () => {
+      console.log('Closing garden')
       nextProcess.kill('SIGINT')
-      process.exit(0)
     })
 
     process.on('SIGTERM', () => {
       nextProcess.kill('SIGTERM')
-      process.exit(0)
     })
 
     nextProcess.on('error', error => {

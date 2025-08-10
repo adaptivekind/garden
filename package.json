@@ -30,6 +30,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@adaptivekind/graph-schema": "^0.1.11",
     "@adaptivekind/markdown-graph": "^0.0.15",
     "commander": "^14.0.0",
     "glob": "^11.0.3",

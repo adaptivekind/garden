@@ -1,0 +1,51 @@
+html {
+  font-family:
+    ui-serif,
+    Georgia,
+    Cambria,
+    Times New Roman,
+    Times,
+    serif;
+}
+
+body {
+  margin: 0;
+  line-height: 1.75rem;
+  font-size: 1.125rem;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+}
+
+article {
+  max-width: 56rem;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.25rem;
+  line-height: 1.25rem;
+}
+
+h1,
+h2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-weight: normal;
+}
+
+a {
+  color: #000;
+}
+
+a[href*="//"]
+{
+  text-decoration-style: dashed;
+}
+
+a {
+  text-decoration-line: underline;
+  text-underline-offset: 2px;
+}
