@@ -22,7 +22,7 @@ Feature: Search functionality
     But I should not see "foo" in the search results
 
   Scenario: Search results are limited to 10 items
-    When I type "kitchen-sink#" in the search field
+    When I type "kitchen-sink" in the search field
     Then I should see search results
     And I should see at most 10 search results
 

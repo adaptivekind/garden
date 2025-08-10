@@ -3,12 +3,8 @@ import { useRouter } from "next/router";
 import ReactMarkdown from "react-markdown";
 import { processWikiLinks } from "../lib/markdown";
 import { createSiteGarden } from "../lib/garden";
-import { hasGraphFile, getNodeNames } from "../lib/graph";
-
 interface DocumentPageProps {
   content: string | null;
-  hasGraph: boolean;
-  nodeNames: string[];
 }
 
 export default function DocumentPage({ content }: DocumentPageProps) {
@@ -64,16 +60,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const targetName = isRootPath ? "readme" : nameArray[0];
   const document = await garden.repository.find(targetName);
 
-  // Get graph data for search functionality
-  const hasGraph = hasGraphFile();
-  const nodeNames = hasGraph ? getNodeNames() : [];
-
   if (!document && isRootPath) {
     return {
       props: {
         content: null,
-        hasGraph,
-        nodeNames,
       },
       revalidate: 60,
     };
@@ -89,8 +79,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       content: document.content,
-      hasGraph,
-      nodeNames,
     },
     revalidate: 60,
   };

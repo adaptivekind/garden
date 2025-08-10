@@ -1,0 +1,13 @@
+{
+  "nodes": {
+    "readme": { "label": "README" },
+    "foo": { "label": "Foo Page" },
+    "bar": { "label": "Bar Page" },
+    "baz": { "label": "Baz in Dir" },
+    "kitchen-sink": { "label": "Kitchen Sink Page" }
+  },
+  "links": [
+    { "source": "readme", "target": "bar" },
+    { "source": "readme", "target": "foo" }
+  ]
+}

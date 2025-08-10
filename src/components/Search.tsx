@@ -1,20 +1,47 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 
-interface SearchProps {
-  nodeNames: string[]
+interface GraphNode {
+  label: string
+  meta?: Record<string, unknown>
 }
 
-export default function Search({ nodeNames }: SearchProps) {
+interface GraphData {
+  nodes: Record<string, GraphNode>
+  links: Array<{ source: string; target: string }>
+}
+
+export default function Search() {
   const [query, setQuery] = useState('')
   const [filteredNodes, setFilteredNodes] = useState<string[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
+  const [nodeNames, setNodeNames] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const inputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
+  // Fetch graph data on component mount
   useEffect(() => {
-    if (query.length > 2) {
+    const fetchGraphData = async () => {
+      try {
+        const response = await fetch('/garden.json')
+        if (response.ok) {
+          const graphData: GraphData = await response.json()
+          setNodeNames(Object.keys(graphData.nodes))
+        }
+      } catch (error) {
+        console.error('Failed to fetch graph data:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchGraphData()
+  }, [])
+
+  useEffect(() => {
+    if (query.length > 2 && nodeNames.length > 0) {
       const filtered = nodeNames.filter(name =>
         name.toLowerCase().includes(query.toLowerCase())
       ).slice(0, 10) // Limit to 10 results
@@ -76,22 +103,36 @@ export default function Search({ nodeNames }: SearchProps) {
     }
   }
 
+  // Don't render anything if no graph data is available
+  if (nodeNames.length === 0 && !isLoading) {
+    return null;
+  }
+
   return (
-    <div className="search-container" style={{ position: 'relative', width: '100%', maxWidth: '400px' }}>
+    <header style={{ 
+      padding: '16px', 
+      borderBottom: '1px solid #eee',
+      display: 'flex',
+      justifyContent: 'center'
+    }}>
+      <div className="search-container" style={{ position: 'relative', width: '100%', maxWidth: '400px' }}>
       <input
         ref={inputRef}
         type="text"
-        placeholder="Search pages..."
+        placeholder={isLoading ? "Loading..." : "Search pages..."}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKeyDown}
+        disabled={isLoading}
         style={{
           width: '100%',
           padding: '8px 12px',
           border: '1px solid #ddd',
           borderRadius: '4px',
           fontSize: '14px',
-          outline: 'none'
+          outline: 'none',
+          opacity: isLoading ? 0.6 : 1,
+          cursor: isLoading ? 'not-allowed' : 'text'
         }}
         data-testid="search-input"
       />
@@ -149,6 +190,7 @@ export default function Search({ nodeNames }: SearchProps) {
           ))}
         </div>
       )}
-    </div>
+      </div>
+    </header>
   )
 }

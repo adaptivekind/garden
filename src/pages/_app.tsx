@@ -3,19 +3,11 @@ import Head from "next/head";
 import Search from "../components/Search";
 import "../app/global.css";
 
-interface CustomPageProps {
-  hasGraph?: boolean;
-  nodeNames?: string[];
-}
-
 interface CustomAppProps extends AppProps {
-  pageProps: CustomPageProps;
+  pageProps: Record<string, unknown>;
 }
 
 export default function App({ Component, pageProps }: CustomAppProps) {
-  const hasGraph = pageProps.hasGraph || false;
-  const nodeNames = pageProps.nodeNames || [];
-
   return (
     <>
       <Head>
@@ -31,16 +23,7 @@ export default function App({ Component, pageProps }: CustomAppProps) {
         <link rel="icon" type="image/svg+xml" sizes="32x32" href="/favicon-32x32.svg" />
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg" />
       </Head>
-      {hasGraph && (
-        <header style={{ 
-          padding: '16px', 
-          borderBottom: '1px solid #eee',
-          display: 'flex',
-          justifyContent: 'center'
-        }}>
-          <Search nodeNames={nodeNames} />
-        </header>
-      )}
+      <Search />
       <main>
         <Component {...pageProps} />
       </main>
