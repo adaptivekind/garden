@@ -66,6 +66,7 @@ npm run lint               # Next.js linter
 npm run typecheck          # TypeScript type checking
 npm run prettier           # Check code formatting
 npm run lint:fix           # Fix linting and formatting issues
+.husky/pre-commit          # Run pre-commit checks (ALWAYS run after changes)
 ```
 
 **CLI Testing:**
@@ -107,3 +108,5 @@ garden                     # Run CLI locally
 When working with tests, the e2e setup expects content in test garden files. The step definitions look for `<article>` elements for content verification.
 
 The CLI spawns Next.js in development mode, setting `MARKDOWN_DIR` to the target directory, allowing the same codebase to serve different markdown collections.
+
+**IMPORTANT:** Always run `.husky/pre-commit` after making any code changes to ensure all linting, formatting, and type checking passes before committing.
