@@ -31,7 +31,12 @@ jest.mock("next/router", () => ({
 }));
 
 describe("Search Fragment Filtering", () => {
+  let consoleErrorSpy: jest.SpyInstance;
+
   beforeEach(() => {
+    // Mock console.error to suppress error output during tests
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    
     (fetch as jest.Mock).mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockGraphData),
@@ -40,6 +45,7 @@ describe("Search Fragment Filtering", () => {
 
   afterEach(() => {
     jest.resetAllMocks();
+    consoleErrorSpy.mockRestore();
   });
 
   it("should remove fragments and combine duplicates in search results", async () => {
@@ -49,6 +55,9 @@ describe("Search Fragment Filtering", () => {
     await waitFor(() => {
       expect(screen.getByPlaceholderText("Search pages...")).toBeInTheDocument();
     });
+    
+    // Verify fetch was called with correct URL
+    expect(fetch).toHaveBeenCalledWith('/garden.json');
 
     const searchInput = screen.getByTestId("search-input");
     
@@ -112,9 +121,11 @@ describe("Search Fragment Filtering", () => {
     expect(screen.getByTestId("search-input")).toBeDisabled();
   });
 
-  it("should not render when no graph data is available", async () => {
+  it("should not render when no graph data is available and log error", async () => {
+    const networkError = new Error("Network error");
+    
     // Mock fetch to return error
-    (fetch as jest.Mock).mockRejectedValue(new Error("Network error"));
+    (fetch as jest.Mock).mockRejectedValue(networkError);
     
     const { container } = render(<Search />);
     
@@ -122,5 +133,11 @@ describe("Search Fragment Filtering", () => {
     await waitFor(() => {
       expect(container.firstChild).toBeNull();
     });
+    
+    // Verify fetch was called with correct URL
+    expect(fetch).toHaveBeenCalledWith('/garden.json');
+    
+    // Verify error was logged
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch graph data:', networkError);
   });
 });
