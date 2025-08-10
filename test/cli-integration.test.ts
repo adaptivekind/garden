@@ -53,8 +53,8 @@ async function checkServerRunning(
         })
       })
       return true
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error(error)
       if (attempt === maxAttempts) return false
       await sleep(1000)
     }
@@ -83,8 +83,9 @@ async function cleanupGraphFile(
 ): Promise<void> {
   try {
     await fs.unlink(filePath)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    console.log(error)
+    // File doesn't exist, that's fine - silently ignore
   }
 }
 
