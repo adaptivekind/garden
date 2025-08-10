@@ -19,8 +19,7 @@
       "Bash(npm test:*)",
       "Bash(npm run test:*)",
       "Bash(npx playwright:*)",
-      "mcp__markdown-reader__read_markdown_file",
-      "Bash(touch:*)"
+      "mcp__markdown-reader__read_markdown_file"
     ],
     "deny": []
   }

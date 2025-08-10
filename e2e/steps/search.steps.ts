@@ -44,17 +44,17 @@ Then('I should not see search results', async function() {
 
 Then('I should see {string} in the search results', async function(text: string) {
   const searchResults = this.page.locator('[data-testid="search-results"]')
-  await expect(searchResults.locator(`text="${text}"`)).toBeVisible()
+  await expect(searchResults.getByText(text, { exact: true })).toBeVisible()
 })
 
 Then('I should see search results containing {string}', async function(text: string) {
   const searchResults = this.page.locator('[data-testid="search-results"]')
-  await expect(searchResults.locator(`text*="${text}"`)).toBeVisible()
+  await expect(searchResults.getByText(text, { exact: true }).first()).toBeVisible()
 })
 
 Then('I should not see {string} in the search results', async function(text: string) {
   const searchResults = this.page.locator('[data-testid="search-results"]')
-  await expect(searchResults.locator(`text="${text}"`)).not.toBeVisible()
+  await expect(searchResults.getByText(text, { exact: true })).not.toBeVisible()
 })
 
 Then('I should see at most {int} search results', async function(maxResults: number) {
@@ -65,7 +65,7 @@ Then('I should see at most {int} search results', async function(maxResults: num
 
 When('I click on {string} in the search results', async function(text: string) {
   const searchResults = this.page.locator('[data-testid="search-results"]')
-  await searchResults.locator(`text="${text}"`).click()
+  await searchResults.getByText(text, { exact: true }).click()
 })
 
 // This step is defined in navigation.steps.ts to avoid duplication
