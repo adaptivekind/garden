@@ -12,7 +12,6 @@ import {
 
 process.on("SIGINT", () => {
   console.log("Closing garden");
-  process.exit(1);
 });
 
 const program = new Command();
