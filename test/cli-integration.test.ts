@@ -52,7 +52,7 @@ async function sleep(ms: number): Promise<void> {
 
 async function checkServerRunning(
   port: number,
-  maxAttempts: number = 10,
+  maxAttempts: number = 20,
 ): Promise<boolean> {
   for (let attempt = 1; isRunning() && attempt <= maxAttempts; attempt++) {
     process.stdout.write(".");
@@ -60,7 +60,7 @@ async function checkServerRunning(
       await new Promise<void>((resolve, reject) => {
         const req = http.get(`http://localhost:${port}`, () => resolve());
         req.on("error", reject);
-        req.setTimeout(2000, () => {
+        req.setTimeout(500, () => {
           req.destroy();
           reject(new Error("Timeout"));
         });
@@ -69,7 +69,7 @@ async function checkServerRunning(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       if (attempt === maxAttempts) return false;
-      await sleep(1000);
+      await sleep(500);
     }
   }
   return false;
@@ -78,7 +78,7 @@ async function checkServerRunning(
 async function checkGraphFile(
   filePath: string = GRAPH_FILE_PATH,
 ): Promise<GraphResult> {
-  const maxAttempts = 10;
+  const maxAttempts = 20;
   for (let attempt = 1; isRunning() && attempt <= maxAttempts; attempt++) {
     process.stdout.write(".");
     try {
@@ -92,7 +92,7 @@ async function checkGraphFile(
     } catch (error) {
       if (attempt == maxAttempts)
         return { exists: false, error: (error as Error).message };
-      await sleep(1000);
+      await sleep(500);
     }
   }
   return { exists: false };
