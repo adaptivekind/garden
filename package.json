@@ -7,7 +7,7 @@
     "garden": "dist/index.js"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "npm run copy:graph && MARKDOWN_DIR=./test/test-gardens/garden1 next dev --turbopack",
     "eslint": "eslint src/pages --ext .ts",
     "eslint:fix": "eslint --fix src/pages --ext .ts",
     "build": "npm run build:site && npm run build:cli",

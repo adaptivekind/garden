@@ -93,11 +93,15 @@ program
     console.log(`Server will be available at http://localhost:${port}`);
 
     // Start Next.js development server
-    const nextProcess = spawn("npx", ["next", "dev", "-p", port], {
-      cwd: appDir,
-      stdio: "inherit",
-      env: { ...process.env },
-    }).on("error", (error) => {
+    const nextProcess = spawn(
+      "npx",
+      ["next", "dev", "--turbopack", "-p", port],
+      {
+        cwd: appDir,
+        stdio: "inherit",
+        env: { ...process.env },
+      },
+    ).on("error", (error) => {
       console.error("Failed to start Next.js server:", error);
       process.exit(1);
     });
