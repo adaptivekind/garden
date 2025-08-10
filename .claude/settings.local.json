@@ -20,7 +20,8 @@
       "Bash(npm run test:*)",
       "Bash(npx playwright:*)",
       "mcp__markdown-reader__read_markdown_file",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(cat:*)"
     ],
     "deny": []
   }

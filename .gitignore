@@ -13,4 +13,5 @@ tsconfig.tsbuildinfo
 npm-debug.log*
 .garden-graph.json
 !test/test-gardens/garden1/.garden-graph.json
+public/garden.json
 

@@ -48,24 +48,6 @@ program
     // Get the path to the Next.js app (relative to this CLI script)
     const appDir = path.join(__dirname, "..");
 
-    console.log(`Starting markdown viewer for directory: ${targetDir}`);
-    console.log(`Server will be available at http://localhost:${port}`);
-
-    // Start Next.js development server
-    const nextProcess = spawn("npx", ["next", "dev", "-p", port], {
-      cwd: appDir,
-      stdio: "inherit",
-      env: { ...process.env },
-    }).on("error", (error) => {
-      console.error("Failed to start Next.js server:", error);
-      process.exit(1);
-    });
-
-    process.on("SIGINT", () => {
-      console.log("Stopping next process");
-      nextProcess.kill("SIGINT");
-    });
-
     // Generate graph after Next.js process has spawned (if requested)
     if (options.generateGraph) {
       try {
@@ -93,6 +75,37 @@ program
         console.error("Failed to generate graph:", error);
       }
     }
+
+    // Copy .garden-graph.json to public directory if it exists
+    const gardenGraphPath = path.join(targetDir, ".garden-graph.json");
+    const publicGraphPath = path.join(appDir, "public", "garden.json");
+
+    if (fs.existsSync(gardenGraphPath)) {
+      try {
+        fs.copyFileSync(gardenGraphPath, publicGraphPath);
+        console.log("Copied .garden-graph.json to public directory");
+      } catch (error) {
+        console.warn("Failed to copy .garden-graph.json:", error);
+      }
+    }
+
+    console.log(`Starting markdown viewer for directory: ${targetDir}`);
+    console.log(`Server will be available at http://localhost:${port}`);
+
+    // Start Next.js development server
+    const nextProcess = spawn("npx", ["next", "dev", "-p", port], {
+      cwd: appDir,
+      stdio: "inherit",
+      env: { ...process.env },
+    }).on("error", (error) => {
+      console.error("Failed to start Next.js server:", error);
+      process.exit(1);
+    });
+
+    process.on("SIGINT", () => {
+      console.log("Stopping next process");
+      nextProcess.kill("SIGINT");
+    });
   });
 
 program.parse();
