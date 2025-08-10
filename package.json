@@ -9,6 +9,16 @@
   "bin": {
     "garden": "dist/index.js"
   },
+  "files": [
+    "dist/",
+    "src/",
+    "public/",
+    "next.config.js",
+    "next-env.d.ts",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "clean:watchman": "watchman watch-del '/Users/ian/projects/my/garden'",
     "dev": "npm run copy:graph && MARKDOWN_DIR=./test/test-gardens/garden1 next dev --turbopack",

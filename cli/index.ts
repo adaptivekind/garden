@@ -1,5 +1,20 @@
 #!/usr/bin/env node
 
+// Handle missing dependencies gracefully
+try {
+  require.resolve("commander");
+} catch (error) {
+  console.error("❌ Error: Missing dependency 'commander'");
+  console.error("This appears to be a packaging issue with @adaptivekind/garden.");
+  console.error("\nTo fix this, try:");
+  console.error("  npm install commander");
+  console.error("  # or reinstall the package:");
+  console.error("  npm uninstall -g @adaptivekind/garden && npm install -g @adaptivekind/garden");
+  console.error("\nIf the problem persists, please report this at:");
+  console.error("  https://github.com/adaptivekind/garden/issues");
+  process.exit(1);
+}
+
 import { Command } from "commander";
 import { spawn } from "child_process";
 import * as path from "path";
