@@ -42,9 +42,13 @@ export default function Search() {
 
   useEffect(() => {
     if (query.length > 2 && nodeNames.length > 0) {
-      const filtered = nodeNames.filter(name =>
-        name.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 10) // Limit to 10 results
+      const filtered = nodeNames
+        .filter(name =>
+          name.toLowerCase().includes(query.toLowerCase())
+        )
+        .map(name => name.split('#')[0]) // Remove fragment identifier and everything after
+        .filter((name, index, array) => array.indexOf(name) === index) // Remove duplicates
+        .slice(0, 10) // Limit to 10 results
       setFilteredNodes(filtered)
       setIsOpen(filtered.length > 0)
       setSelectedIndex(-1)
