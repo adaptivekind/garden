@@ -78,17 +78,24 @@ async function checkServerRunning(
 async function checkGraphFile(
   filePath: string = GRAPH_FILE_PATH,
 ): Promise<GraphResult> {
-  try {
-    const content = await fs.readFile(filePath, "utf8");
-    const graph = JSON.parse(content);
-    return {
-      exists: true,
-      nodeCount: Object.keys(graph.nodes || {}).length,
-      linkCount: (graph.links || []).length,
-    };
-  } catch (error) {
-    return { exists: false, error: (error as Error).message };
+  const maxAttempts = 10;
+  for (let attempt = 1; isRunning() && attempt <= maxAttempts; attempt++) {
+    process.stdout.write(".");
+    try {
+      const content = await fs.readFile(filePath, "utf8");
+      const graph = JSON.parse(content);
+      return {
+        exists: true,
+        nodeCount: Object.keys(graph.nodes || {}).length,
+        linkCount: (graph.links || []).length,
+      };
+    } catch (error) {
+      if (attempt == maxAttempts)
+        return { exists: false, error: (error as Error).message };
+      await sleep(1000);
+    }
   }
+  return { exists: false };
 }
 
 async function cleanupGraphFile(
