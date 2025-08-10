@@ -110,6 +110,11 @@ program
       console.log("Stopping next process");
       nextProcess.kill("SIGINT");
     });
+
+    process.on("SIGTERM", () => {
+      console.log("Stopping next process ...");
+      nextProcess.kill("SIGTERM");
+    });
   });
 
 program.parse();
