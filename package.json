@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "A Next.js application to view markdown files in any directory",
   "main": "dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "garden": "dist/index.js"
   },
