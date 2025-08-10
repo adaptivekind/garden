@@ -34,6 +34,18 @@ interface GraphResult {
   error?: string;
 }
 
+const state = {
+  isRunning: true,
+};
+
+function isRunning() {
+  return state.isRunning;
+}
+
+function stop() {
+  state.isRunning = false;
+}
+
 async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -42,7 +54,8 @@ async function checkServerRunning(
   port: number,
   maxAttempts: number = 10,
 ): Promise<boolean> {
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+  for (let attempt = 1; isRunning() && attempt <= maxAttempts; attempt++) {
+    process.stdout.write(".");
     try {
       await new Promise<void>((resolve, reject) => {
         const req = http.get(`http://localhost:${port}`, () => resolve());
@@ -119,6 +132,10 @@ async function runTest(
     stdio: "pipe",
     env: { ...process.env, NODE_ENV: "test" },
   });
+  process.on("SIGINT", () => {
+    console.log(`... stopping cli : with graph = ${useGraphFlag}`);
+    cliProcess.kill("SIGINT");
+  });
 
   let output = "";
   cliProcess.stdout?.on("data", (data: Buffer) => {
@@ -132,11 +149,13 @@ async function runTest(
   try {
     // Wait for server to start
     console.log("   Waiting for server to start...");
-    await sleep(3000);
 
     const serverRunning = await checkServerRunning(TEST_PORT);
 
     if (!serverRunning) {
+      if (!isRunning()) {
+        return false;
+      }
       throw new Error("Server failed to start");
     }
 
@@ -199,16 +218,19 @@ async function main(): Promise<void> {
   allPassed = allPassed && test1Passed;
 
   // Test with graph generation
-  const test2Passed = await runTest("CLI with graph generation", true);
+  const test2Passed =
+    isRunning() && (await runTest("CLI with graph generation", true));
   allPassed = allPassed && test2Passed;
 
-  console.log("\n📊 Test Results:");
-  if (allPassed) {
-    console.log("✅ All CLI integration tests passed!");
-    process.exit(0);
-  } else {
-    console.log("❌ Some CLI integration tests failed!");
-    process.exit(1);
+  if (isRunning()) {
+    console.log("\n📊 Test Results:");
+    if (allPassed) {
+      console.log("✅ All CLI integration tests passed!");
+      process.exit(0);
+    } else {
+      console.log("❌ Some CLI integration tests failed!");
+      process.exit(1);
+    }
   }
 }
 
@@ -220,6 +242,11 @@ process.on(
     process.exit(1);
   },
 );
+
+process.on("SIGINT", () => {
+  console.log("Stopping tests ...");
+  stop();
+});
 
 main().catch((error) => {
   console.error("Fatal error:", error);

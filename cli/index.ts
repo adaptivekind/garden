@@ -10,6 +10,11 @@ import {
   RepositoryOptions,
 } from "@adaptivekind/markdown-graph";
 
+process.on("SIGINT", () => {
+  console.log("Closing garden");
+  process.exit(1);
+});
+
 const program = new Command();
 
 program
@@ -50,6 +55,12 @@ program
       env: { ...process.env },
     });
 
+    process.on("SIGINT", () => {
+      console.log("Stopping next process");
+      nextProcess.kill("SIGINT");
+      process.exit(1);
+    });
+
     // Generate graph after Next.js process has spawned (if requested)
     if (options.generateGraph) {
       try {
@@ -78,13 +89,8 @@ program
       }
     }
 
-    process.on("SIGINT", () => {
-      console.log("Closing garden");
-      nextProcess.kill("SIGINT");
-    });
-
     process.on("SIGTERM", () => {
-      nextProcess.kill("SIGTERM");
+      console.log("Garden CLI - SIGTERM received");
     });
 
     nextProcess.on("error", (error) => {
