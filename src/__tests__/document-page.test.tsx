@@ -16,7 +16,7 @@ describe("DocumentPage", () => {
   it("renders markdown content correctly", () => {
     const content =
       "# Hello World\n\nThis is a **test** markdown page with *italic* text.";
-    render(<DocumentPage content={content} />);
+    render(<DocumentPage content={content} hasGraph={false} nodeNames={[]} />);
 
     const article = screen.getByRole("article");
     expect(article.innerHTML).toContain("Hello World");
@@ -24,7 +24,7 @@ describe("DocumentPage", () => {
   });
 
   it("renders fallback when no content", () => {
-    render(<DocumentPage content={null} />);
+    render(<DocumentPage content={null} hasGraph={false} nodeNames={[]} />);
 
     expect(screen.getByText("Not Found")).toBeInTheDocument();
   });

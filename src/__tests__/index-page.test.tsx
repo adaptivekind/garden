@@ -22,10 +22,10 @@ describe("Index Page", () => {
     it("renders README content", async () => {
       const result = await getStaticProps({ params: { name: [] } });
       const { props } = result as {
-        props: { content: string | null };
+        props: { content: string | null; hasGraph: boolean; nodeNames: string[] };
       };
 
-      render(<DocumentPage content={props.content} />);
+      render(<DocumentPage content={props.content} hasGraph={props.hasGraph} nodeNames={props.nodeNames} />);
 
       expect(screen.getByRole("article")).toBeInTheDocument();
       expect(screen.getByText("Index page for garden1")).toBeInTheDocument();
