@@ -26,7 +26,7 @@
     "test:cucumber": "cucumber-js e2e/features --require-module ts-node/register --require e2e/steps/**/*.ts",
     "test:e2e": "start-server-and-test start 3000 test:cucumber",
     "test:e2e:headed": "HEADED=true start-server-and-test start 3000 test:cucumber",
-    "test:cli": "node test/cli-integration.test.js",
+    "test:cli": "ts-node --esm test/cli-integration.test.ts",
     "upgrade": "npx npm-check-updates -u && npm install",
     "prepare": "husky"
   },

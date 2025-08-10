@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
-const { spawn } = require('child_process')
-const { promises: fs } = require('fs')
-const path = require('path')
-const http = require('http')
+import { spawn, ChildProcess } from 'node:child_process'
+import { promises as fs } from 'node:fs'
+import * as path from 'node:path'
+import * as http from 'node:http'
+import { fileURLToPath } from 'node:url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const TEST_PORT = 3001
 const TEST_GARDEN_PATH = path.join(__dirname, 'test-gardens', 'garden1')
@@ -23,15 +27,25 @@ const CUSTOM_GRAPH_PATH = path.join(
   'custom-graph.json'
 )
 
-async function sleep(ms) {
+interface GraphResult {
+  exists: boolean
+  nodeCount?: number
+  linkCount?: number
+  error?: string
+}
+
+async function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-async function checkServerRunning(port, maxAttempts = 10) {
+async function checkServerRunning(
+  port: number,
+  maxAttempts: number = 10
+): Promise<boolean> {
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      await new Promise((resolve, reject) => {
-        const req = http.get(`http://localhost:${port}`, resolve)
+      await new Promise<void>((resolve, reject) => {
+        const req = http.get(`http://localhost:${port}`, () => resolve())
         req.on('error', reject)
         req.setTimeout(2000, () => {
           req.destroy()
@@ -40,6 +54,7 @@ async function checkServerRunning(port, maxAttempts = 10) {
       })
       return true
     } catch (error) {
+      console.error(error)
       if (attempt === maxAttempts) return false
       await sleep(1000)
     }
@@ -47,7 +62,9 @@ async function checkServerRunning(port, maxAttempts = 10) {
   return false
 }
 
-async function checkGraphFile(filePath = GRAPH_FILE_PATH) {
+async function checkGraphFile(
+  filePath: string = GRAPH_FILE_PATH
+): Promise<GraphResult> {
   try {
     const content = await fs.readFile(filePath, 'utf8')
     const graph = JSON.parse(content)
@@ -57,34 +74,39 @@ async function checkGraphFile(filePath = GRAPH_FILE_PATH) {
       linkCount: (graph.links || []).length,
     }
   } catch (error) {
-    return { exists: false, error: error.message }
+    return { exists: false, error: (error as Error).message }
   }
 }
 
-async function cleanupGraphFile(filePath = GRAPH_FILE_PATH) {
+async function cleanupGraphFile(
+  filePath: string = GRAPH_FILE_PATH
+): Promise<void> {
   try {
     await fs.unlink(filePath)
   } catch (error) {
-    // File doesn't exist, that's fine
+    console.log(error)
   }
 }
 
-async function makeTargetTestDirectory() {
+async function makeTargetTestDirectory(): Promise<void> {
   await fs.mkdir(TARGET_TEST_DIRECTORY, { recursive: true })
 }
 
-async function cleanupAllGraphFiles() {
+async function cleanupAllGraphFiles(): Promise<void> {
   await cleanupGraphFile(GRAPH_FILE_PATH)
   await cleanupGraphFile(CUSTOM_GRAPH_PATH)
 }
 
-async function runTest(testName, useGraphFlag) {
+async function runTest(
+  testName: string,
+  useGraphFlag: boolean
+): Promise<boolean> {
   console.log(`\n🧪 Running test: ${testName}`)
 
   // Clean up any existing graph files
   await cleanupAllGraphFiles()
 
-  const args = ['-d', TEST_GARDEN_PATH, '-p', TEST_PORT]
+  const args = ['-d', TEST_GARDEN_PATH, '-p', TEST_PORT.toString()]
   if (useGraphFlag) {
     args.push('-g')
     args.push('-o', CUSTOM_GRAPH_PATH)
@@ -92,17 +114,17 @@ async function runTest(testName, useGraphFlag) {
 
   console.log(`   Starting CLI with args: ${args.join(' ')}`)
 
-  const cliProcess = spawn('node', [CLI_PATH, ...args], {
+  const cliProcess: ChildProcess = spawn('node', [CLI_PATH, ...args], {
     stdio: 'pipe',
     env: { ...process.env, NODE_ENV: 'test' },
   })
 
   let output = ''
-  cliProcess.stdout.on('data', data => {
+  cliProcess.stdout?.on('data', (data: Buffer) => {
     output += data.toString()
   })
 
-  cliProcess.stderr.on('data', data => {
+  cliProcess.stderr?.on('data', (data: Buffer) => {
     output += data.toString()
   })
 
@@ -131,7 +153,7 @@ async function runTest(testName, useGraphFlag) {
         `   ✅ Graph file created at ${CUSTOM_GRAPH_PATH} with ${graphResult.nodeCount} nodes and ${graphResult.linkCount} links`
       )
 
-      if (graphResult.nodeCount === 0) {
+      if ((graphResult.nodeCount || 0) === 0) {
         throw new Error('Graph should contain nodes')
       }
     } else {
@@ -144,7 +166,7 @@ async function runTest(testName, useGraphFlag) {
     console.log(`   ✅ ${testName} passed`)
     return true
   } catch (error) {
-    console.log(`   ❌ ${testName} failed: ${error.message}`)
+    console.log(`   ❌ ${testName} failed: ${(error as Error).message}`)
     console.log('   CLI output:', output)
     return false
   } finally {
@@ -154,7 +176,7 @@ async function runTest(testName, useGraphFlag) {
   }
 }
 
-async function main() {
+async function main(): Promise<void> {
   console.log('🚀 Starting CLI Integration Tests')
   console.log(`   Test garden path: ${TEST_GARDEN_PATH}`)
   console.log(`   CLI path: ${CLI_PATH}`)
@@ -190,10 +212,13 @@ async function main() {
 }
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason)
-  process.exit(1)
-})
+process.on(
+  'unhandledRejection',
+  (reason: unknown, promise: Promise<unknown>) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason)
+    process.exit(1)
+  }
+)
 
 main().catch(error => {
   console.error('Fatal error:', error)

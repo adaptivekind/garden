@@ -5,6 +5,7 @@ node_modules/
 
 /build
 /dist
+/target
 
 tsconfig.tsbuildinfo
 .DS_Store
