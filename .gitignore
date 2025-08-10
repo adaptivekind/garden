@@ -10,3 +10,4 @@ tsconfig.tsbuildinfo
 .DS_Store
 *.log
 npm-debug.log*
+.garden-graph.json

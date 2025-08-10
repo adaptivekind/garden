@@ -4,7 +4,11 @@ import { Command } from 'commander'
 import { spawn } from 'child_process'
 import * as path from 'path'
 import * as fs from 'fs'
-import { createGarden, Garden } from '@adaptivekind/markdown-graph'
+import {
+  createGarden,
+  Garden,
+  RepositoryOptions,
+} from '@adaptivekind/markdown-graph'
 
 const program = new Command()
 
@@ -19,6 +23,7 @@ program
     process.cwd()
   )
   .option('-g, --generate-graph', 'generate markdown graph on startup')
+  .option('-o, --graph-output <file>', 'specify output file for graph JSON')
   .action(async options => {
     const targetDir = path.resolve(options.dir)
     const port = options.port
@@ -49,13 +54,25 @@ program
     if (options.generateGraph) {
       try {
         console.log('Generating markdown graph...')
-        const garden: Garden = await createGarden({
-          type: 'file',
-          path: targetDir,
-        })
+        const gardenOptions: RepositoryOptions = {
+          ...{
+            type: 'file',
+            path: targetDir,
+          },
+          ...(options.graphOutput
+            ? { outputPath: path.resolve(options.graphOutput) }
+            : {}),
+        }
+
+        if (options.graphOutput) {
+          console.log(`Graph will be saved to: ${gardenOptions.outputPath}`)
+        }
+
+        const garden: Garden = await createGarden(gardenOptions)
         console.log(
           `Graph generated with ${Object.keys(garden.graph.nodes).length} nodes and ${garden.graph.links.length} links`
         )
+        garden.save()
       } catch (error) {
         console.error('Failed to generate graph:', error)
       }
